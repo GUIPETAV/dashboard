@@ -10,7 +10,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-url = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_media_3.csv'
+url = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_media_30m.csv'
 
 base = pd.read_csv(url)
 
@@ -53,7 +53,7 @@ def update_scatter_plot(selected_features):
 
     # Criar uma trace de dispersão para cada feature selecionada
     for feature in selected_features:
-        trace = go.Scatter(x=base['date'], y=base[feature], mode='markers', name=feature)
+        trace = go.Scatter(x=base['Datetime'], y=base[feature], mode='markers', name=feature)
         traces.append(trace)
 
     fig_scatter = go.Figure(data=traces)
@@ -75,7 +75,7 @@ def update_line_plot(selected_features):
 
     # Criar uma trace de linha para cada feature selecionada
     for feature in selected_features:
-        trace = go.Scatter(x=base['date'], y=base[feature], mode='lines', name=feature)
+        trace = go.Scatter(x=base['Datetime'], y=base[feature], mode='lines', name=feature)
         traces.append(trace)
 
     fig_line = go.Figure(data=traces)
