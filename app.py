@@ -5,10 +5,7 @@ import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
 from datetime import datetime, timedelta
-import locale
 
-# Set the locale to Brazilian Portuguese
-locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
