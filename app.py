@@ -1,4 +1,3 @@
-
 import dash
 from dash import html, dcc
 import plotly.express as px
@@ -13,10 +12,13 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 server = app.server
 
-url = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_media_30m.csv'
+# ajustes dos dados reais  
 
-base = pd.read_csv(url)
+url1 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_media_30m.csv'
+
+base = pd.read_csv(url1)
 base['Datetime'] = pd.to_datetime(base['Datetime'])
+
 
 # Lista de features disponíveis
 features = base.columns[1:]
@@ -26,6 +28,20 @@ selected_features = []
 
 fig_scatter = go.Figure()
 fig_line = go.Figure()
+
+# # ajustes dos dados processados 
+
+# url2 = 'https://github.com/GUIPETAV/Base/blob/main/resultados_reais.csv'
+
+# acuracia = pd.read_csv(url2)
+
+# # lista com os classificador
+# classifiers = 
+
+
+# Lista vazia para armazenar as classificadores selecionadas
+selected_classifiers = []
+
 
 # Personalizar o layout do gráfico
 # Layout
