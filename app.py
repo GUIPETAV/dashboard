@@ -49,7 +49,8 @@ app.layout = html.Div(
         ),
 
         dcc.Graph(id='scatter-plot'),
-        dcc.Graph(id='line-plot')
+        dcc.Graph(id='line-plot'),
+        dcc.Graph(id= 'box-plot')
     ]
 )
 
@@ -106,6 +107,26 @@ def update_line_plot(selected_features, selected_days):
     )
 
     return fig_line
+
+@app.callback(
+    dash.dependencies.Output('box-plot', 'figure'),
+    [dash.dependencies.Input('feature-selector', 'value')]
+)
+def update_box_plot(selected_features):
+    traces = []
+
+    # Create a box plot trace for each selected feature
+    for feature in selected_features:
+        trace = go.Box(y=base[feature], name=feature)
+        traces.append(trace)
+
+    fig_box = go.Figure(data=traces)
+    fig_box.update_layout(
+        title='Distribuição das Features Selecionadas (Boxplot)',
+        yaxis_title='Valor'
+    )
+
+    return fig_box
 
 
 if __name__ == '__main__':
