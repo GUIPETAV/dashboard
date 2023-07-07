@@ -1,9 +1,14 @@
+
 import dash
 from dash import html, dcc
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
-from datetime import datetime
+from datetime import datetime, timedelta
+import locale
+
+# Set the locale to Brazilian Portuguese
+locale.setlocale(locale.LC_TIME, 'pt_BR.utf8')
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -40,17 +45,30 @@ app.layout = html.Div(
             multi=True  # Permitir seleção múltipla
         ),
 
-        # Campos de seleção para a data de início e fim
+        # Campos de seleção para o primeiro intervalo de data
         dcc.DatePickerSingle(
             id='start-date-selector',
-            placeholder='Select a start date',
-            date=datetime.now().date()  # Defina a data de início como a data atual
+            placeholder='Select a start date for the first interval',
+            date=datetime.now().date() - timedelta(days=7)  # Defina a data de início do primeiro intervalo
         ),
 
         dcc.DatePickerSingle(
             id='end-date-selector',
-            placeholder='Select an end date',
-            date=datetime.now().date()  # Defina a data de fim como a data atual
+            placeholder='Select an end date for the first interval',
+            date=datetime.now().date()  # Defina a data de fim do primeiro intervalo
+        ),
+
+        # Campos de seleção para o segundo intervalo de data
+        dcc.DatePickerSingle(
+            id='start-date-selector-2',
+            placeholder='Select a start date for the second interval',
+            date=datetime.now().date() - timedelta(days=14)  # Defina a data de início do segundo intervalo
+        ),
+
+        dcc.DatePickerSingle(
+            id='end-date-selector-2',
+            placeholder='Select an end date for the second interval',
+            date=datetime.now().date() - timedelta(days=7)  # Defina a data de fim do segundo intervalo
         ),
 
         dcc.Graph(id='scatter-plot'),
@@ -64,25 +82,36 @@ app.layout = html.Div(
     dash.dependencies.Output('scatter-plot', 'figure'),
     [dash.dependencies.Input('feature-selector', 'value'),
      dash.dependencies.Input('start-date-selector', 'date'),
-     dash.dependencies.Input('end-date-selector', 'date')]
+     dash.dependencies.Input('end-date-selector', 'date'),
+     dash.dependencies.Input('start-date-selector-2', 'date'),
+     dash.dependencies.Input('end-date-selector-2', 'date')]
 )
-def update_scatter_plot(selected_features, start_date, end_date):
+def update_scatter_plot(selected_features, start_date, end_date, start_date_2, end_date_2):
     traces = []
 
-    if start_date and end_date:
+    if start_date and end_date and start_date_2 and end_date_2:
         try:
             start_date = pd.to_datetime(start_date).date()
             end_date = pd.to_datetime(end_date).date()
+            start_date_2 = pd.to_datetime(start_date_2).date()
+            end_date_2 = pd.to_datetime(end_date_2).date()
 
-            # Filter the data based on the selected start and end dates
-            filtered_data = base[
+            # Filter the data based on the selected intervals
+            filtered_data_1 = base[
                 (base['Datetime'].dt.date >= start_date) & (base['Datetime'].dt.date <= end_date)
             ]
+            filtered_data_2 = base[
+                (base['Datetime'].dt.date >= start_date_2) & (base['Datetime'].dt.date <= end_date_2)
+            ]
 
-            # Create a scatter plot trace for each selected feature
+            # Create scatter plot traces for each selected feature and interval
             for feature in selected_features:
-                trace = go.Scatter(x=filtered_data['Datetime'], y=filtered_data[feature], mode='markers', name=feature)
-                traces.append(trace)
+                trace_1 = go.Scatter(x=filtered_data_1['Datetime'], y=filtered_data_1[feature],
+                                     mode='markers', name=f"{feature} - Interval 1")
+                trace_2 = go.Scatter(x=filtered_data_2['Datetime'], y=filtered_data_2[feature],
+                                     mode='markers', name=f"{feature} - Interval 2")
+                traces.append(trace_1)
+                traces.append(trace_2)
 
         except Exception as e:
             print(f"Error: {e}")
@@ -102,25 +131,37 @@ def update_scatter_plot(selected_features, start_date, end_date):
     dash.dependencies.Output('line-plot', 'figure'),
     [dash.dependencies.Input('feature-selector', 'value'),
      dash.dependencies.Input('start-date-selector', 'date'),
-     dash.dependencies.Input('end-date-selector', 'date')]
+     dash.dependencies.Input('end-date-selector', 'date'),
+     dash.dependencies.Input('start-date-selector-2', 'date'),
+     dash.dependencies.Input('end-date-selector-2', 'date')]
 )
-def update_line_plot(selected_features, start_date, end_date):
+def update_line_plot(selected_features, start_date, end_date, start_date_2, end_date_2):
     traces = []
 
-    if start_date and end_date:
+    if start_date and end_date and start_date_2 and end_date_2:
+
         try:
             start_date = pd.to_datetime(start_date).date()
             end_date = pd.to_datetime(end_date).date()
+            start_date_2 = pd.to_datetime(start_date_2).date()
+            end_date_2 = pd.to_datetime(end_date_2).date()
 
-            # Filter the data based on the selected start and end dates
-            filtered_data = base[
+            # Filter the data based on the selected intervals
+            filtered_data_1 = base[
                 (base['Datetime'].dt.date >= start_date) & (base['Datetime'].dt.date <= end_date)
             ]
+            filtered_data_2 = base[
+                (base['Datetime'].dt.date >= start_date_2) & (base['Datetime'].dt.date <= end_date_2)
+            ]
 
-            # Create a line plot trace for each selected feature
+            # Create line plot traces for each selected feature and interval
             for feature in selected_features:
-                trace = go.Scatter(x=filtered_data['Datetime'], y=filtered_data[feature], mode='lines', name=feature)
-                traces.append(trace)
+                trace_1 = go.Scatter(x=filtered_data_1['Datetime'], y=filtered_data_1[feature],
+                                     mode='lines', name=f"{feature} - Interval 1")
+                trace_2 = go.Scatter(x=filtered_data_2['Datetime'], y=filtered_data_2[feature],
+                                     mode='lines', name=f"{feature} - Interval 2")
+                traces.append(trace_1)
+                traces.append(trace_2)
 
         except Exception as e:
             print(f"Error: {e}")
@@ -140,25 +181,34 @@ def update_line_plot(selected_features, start_date, end_date):
     dash.dependencies.Output('box-plot', 'figure'),
     [dash.dependencies.Input('feature-selector', 'value'),
      dash.dependencies.Input('start-date-selector', 'date'),
-     dash.dependencies.Input('end-date-selector', 'date')]
+     dash.dependencies.Input('end-date-selector', 'date'),
+     dash.dependencies.Input('start-date-selector-2', 'date'),
+     dash.dependencies.Input('end-date-selector-2', 'date')]
 )
-def update_box_plot(selected_features, start_date, end_date):
+def update_box_plot(selected_features, start_date, end_date, start_date_2, end_date_2):
     traces = []
 
-    if start_date and end_date:
+    if start_date and end_date and start_date_2 and end_date_2:
         try:
             start_date = pd.to_datetime(start_date).date()
             end_date = pd.to_datetime(end_date).date()
+            start_date_2 = pd.to_datetime(start_date_2).date()
+            end_date_2 = pd.to_datetime(end_date_2).date()
 
-            # Filter the data based on the selected start and end dates
-            filtered_data = base[
+            # Filter the data based on the selected intervals
+            filtered_data_1 = base[
                 (base['Datetime'].dt.date >= start_date) & (base['Datetime'].dt.date <= end_date)
             ]
+            filtered_data_2 = base[
+                (base['Datetime'].dt.date >= start_date_2) & (base['Datetime'].dt.date <= end_date_2)
+            ]
 
-            # Create a box plot trace for each selected feature
+            # Create box plot traces for each selected feature and interval
             for feature in selected_features:
-                trace = go.Box(y=filtered_data[feature], name=feature)
-                traces.append(trace)
+                trace_1 = go.Box(y=filtered_data_1[feature], name=f"{feature} - Interval 1")
+                trace_2 = go.Box(y=filtered_data_2[feature], name=f"{feature} - Interval 2")
+                traces.append(trace_1)
+                traces.append(trace_2)
 
         except Exception as e:
             print(f"Error: {e}")
