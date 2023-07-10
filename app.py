@@ -14,8 +14,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_ca
 
 
 server = app.server
-
-
+# Ajustes da pagina 1 
 # ajustes dos dados reais  
 
 url1 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_media_30m.csv'
@@ -227,18 +226,34 @@ def update_box_plot(selected_features, start_date, end_date, start_date_2, end_d
 
 
 
-
-
 page2_layout = html.Div([
-    html.H1("Acurácia dos modelos treinados ", id="h1", style={'text-align': 'center'}),
+    html.H1("Visualização dos dados simulados", id="h1", style={'text-align': 'center'}),
     # Conteúdo da página 2...
+])
+
+page3_layout = html.Div([
+    html.H1("Classificadores reais/reais", id="h1", style={'text-align': 'center'}),
+    # Conteúdo da página 3...
+])
+
+page4_layout = html.Div([
+    html.H1("Classificadores simulado/simulado", id="h1", style={'text-align': 'center'}),
+    # Conteúdo da página 4...
+])
+
+page5_layout = html.Div([
+    html.H1("Classificadores simulado/reais", id="h1", style={'text-align': 'center'}),
+    # Conteúdo da página 5...
 ])
 
 # Layout principal com guias
 app.layout = html.Div([
     dcc.Tabs(id='tabs', value='page1', children=[
         dcc.Tab(label='Visualização dos dados reais', value='page1'),
-        dcc.Tab(label='Página 2', value='page2'),
+        dcc.Tab(label='Visualização dos dados simulados', value='page2'),
+        dcc.Tab(label='Classificadores reais/reais ', value='page3'),
+        dcc.Tab(label='Classificadores simulado/simulado ', value='page4'),
+        dcc.Tab(label='Classificadores simulado/reais ', value='page5'),
     ]),
     html.Div(id='page-content')
 ])
@@ -250,6 +265,12 @@ def render_page_content(tab):
         return page1_layout
     elif tab == 'page2':
         return page2_layout
+    elif tab == 'page3':
+        return page3_layout
+    elif tab == 'page4':
+        return page4_layout
+    elif tab == 'page5':
+        return page5_layout
     else:
         return html.Div('Página não encontrada')
 
