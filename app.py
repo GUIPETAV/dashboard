@@ -12,6 +12,10 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 
+
+server = app.server
+
+
 # ajustes dos dados reais  
 
 url1 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_media_30m.csv'
