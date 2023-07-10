@@ -3,14 +3,14 @@ from dash import html, dcc
 import plotly.express as px
 import pandas as pd
 import plotly.graph_objects as go
+from dash.dependencies import Input, Output
 from datetime import datetime, timedelta
+
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-
-server = app.server
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_callback_exceptions=True)
 
 # ajustes dos dados reais  
 
@@ -29,23 +29,9 @@ selected_features = []
 fig_scatter = go.Figure()
 fig_line = go.Figure()
 
-# # ajustes dos dados processados 
 
-# url2 = 'https://github.com/GUIPETAV/Base/blob/main/resultados_reais.csv'
-
-# acuracia = pd.read_csv(url2)
-
-# # lista com os classificador
-# classifiers = 
-
-
-# Lista vazia para armazenar as classificadores selecionadas
-selected_classifiers = []
-
-
-# Personalizar o layout do gráfico
-# Layout
-app.layout = html.Div(
+# Definir o layout das páginas
+page1_layout =html.Div(
     id="div1",
     children=[
         html.H1("Visualização dos dados reais ", id="h1", style={'text-align': 'center'}),
@@ -191,7 +177,7 @@ def update_line_plot(selected_features, start_date, end_date, start_date_2, end_
 
 
 @app.callback(
-    dash.dependencies.Output('box-plot', 'figure'),
+     dash.dependencies.Output('box-plot', 'figure'),
     [dash.dependencies.Input('feature-selector', 'value'),
      dash.dependencies.Input('start-date-selector', 'date'),
      dash.dependencies.Input('end-date-selector', 'date'),
@@ -236,5 +222,32 @@ def update_box_plot(selected_features, start_date, end_date, start_date_2, end_d
     return fig_box
 
 
+
+
+
+page2_layout = html.Div([
+    html.H1("Acurácia dos modelos treinados ", id="h1", style={'text-align': 'center'}),
+    # Conteúdo da página 2...
+])
+
+# Layout principal com guias
+app.layout = html.Div([
+    dcc.Tabs(id='tabs', value='page1', children=[
+        dcc.Tab(label='Visualização dos dados reais', value='page1'),
+        dcc.Tab(label='Página 2', value='page2'),
+    ]),
+    html.Div(id='page-content')
+])
+
+# Callback para alternar o conteúdo com base na guia selecionada
+@app.callback(Output('page-content', 'children'), [Input('tabs', 'value')])
+def render_page_content(tab):
+    if tab == 'page1':
+        return page1_layout
+    elif tab == 'page2':
+        return page2_layout
+    else:
+        return html.Div('Página não encontrada')
+
 if __name__ == '__main__':
-    app.run_server(debug=True, port=8052)
+    app.run_server(debug=True)
