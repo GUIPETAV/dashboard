@@ -14,6 +14,7 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets, suppress_ca
 
 
 server = app.server
+
 # Ajustes da pagina 1 
 # ajustes dos dados reais  
 
@@ -230,11 +231,54 @@ page2_layout = html.Div([
     html.H1("Visualização dos dados simulados", id="h1", style={'text-align': 'center'}),
     # Conteúdo da página 2...
 ])
+# Ajustes pagina 3
+
+url2 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/resultados_reais2.csv'
+base22 = pd.read_csv(url2)
+
+# Lista de parâmetros disponíveis
+parametros = ['Acurácia', 'Precisão', 'F1-score', 'Recall']
+
 
 page3_layout = html.Div([
     html.H1("Classificadores reais/reais", id="h1", style={'text-align': 'center'}),
-    # Conteúdo da página 3...
+    html.Div([
+        dcc.Dropdown(
+            id='parametro-dropdown',
+            options=[{'label': parametro, 'value': parametro} for parametro in parametros],
+            value=parametros[0]  # Seleciona o primeiro parâmetro por padrão
+        ),
+        dcc.Dropdown(
+            id='nome-dropdown',
+            options=[{'label': nome, 'value': nome} for nome in base22['Nome'].unique()],
+            multi=True,
+            value=[base22['Nome'].unique()[0]]  # Seleciona o primeiro nome por padrão
+        ),
+        dcc.Graph(id='boxplot-graph')
+    ])
 ])
+
+# Callback para atualizar o gráfico de boxplot com base nos parâmetros selecionados
+@app.callback(
+    Output('boxplot-graph', 'figure'),
+    [Input('parametro-dropdown', 'value'),
+     Input('nome-dropdown', 'value')]
+)
+def update_boxplot(parametro, nome_values):
+    fig = go.Figure()
+    for nome in nome_values:
+        filtered_df = base22[base22['Nome'] == nome]
+        fig.add_trace(go.Box(y=filtered_df[parametro], name=nome))
+
+    return fig
+
+
+
+
+
+
+
+
 
 page4_layout = html.Div([
     html.H1("Classificadores simulado/simulado", id="h1", style={'text-align': 'center'}),
