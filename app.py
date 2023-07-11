@@ -23,6 +23,7 @@ url1 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_media_30m.csv'
 base = pd.read_csv(url1)
 base['Datetime'] = pd.to_datetime(base['Datetime'])
 
+#base.head()
 
 # Lista de features disponíveis
 features = base.columns[1:]
@@ -228,8 +229,10 @@ def update_box_plot(selected_features, start_date, end_date, start_date_2, end_d
 # Ajustes da pagina 2 
 # ajustes dos dados reais  
 
-url3 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/base_sim_media30.csv'
+url3 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/dados_index.csv'
 base3 = pd.read_csv(url3)
+
+# base3.head
 base3['Datetime'] = pd.to_datetime(base3['Datetime'])
 
 
@@ -291,7 +294,7 @@ page2_layout = html.Div(
 
 @app.callback(
     dash.dependencies.Output('scatter-plot-page2', 'figure'),
-    [dash.dependencies.Input('feature-selector-page2', 'value'),
+    [dash.dependencies.Input('feature', 'value'),
      dash.dependencies.Input('start-date-selector-page2', 'date'),
      dash.dependencies.Input('end-date-selector-page2', 'date'),
      dash.dependencies.Input('start-date-selector-2-page2', 'date'),
