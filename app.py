@@ -226,15 +226,14 @@ def update_box_plot(selected_features, start_date, end_date, start_date_2, end_d
 
     return fig_box
 
-# Ajustes da pagina 2 
-# ajustes dos dados reais  
+# Ajustes da página 2
+# Ajustes dos dados reais
 
 url3 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/dados_index.csv'
 base3 = pd.read_csv(url3)
 
 # base3.head
 base3['Datetime'] = pd.to_datetime(base3['Datetime'])
-
 
 # Lista de features disponíveis
 features = base3.columns[1:]
@@ -249,7 +248,7 @@ fig_line = go.Figure()
 page2_layout = html.Div(
     id="div1",
     children=[
-        html.H1("Visualização dos dados simulados ", id="h1", style={'text-align': 'center'}),
+        html.H1("Visualização dos dados simulados", id="h1", style={'text-align': 'center'}),
 
         # Caixas de seleção para as features
         dcc.Dropdown(
@@ -262,26 +261,26 @@ page2_layout = html.Div(
         # Campos de seleção para o primeiro intervalo de data
         dcc.DatePickerSingle(
             id='start-date-selector-page2',
-            placeholder='Select a start date for the first interval',
+            placeholder='Selecione uma data de início para o primeiro intervalo',
             date=datetime.now().date() - timedelta(days=7)  # Defina a data de início do primeiro intervalo
         ),
 
         dcc.DatePickerSingle(
             id='end-date-selector-page2',
-            placeholder='Select an end date for the first interval',
+            placeholder='Selecione uma data de fim para o primeiro intervalo',
             date=datetime.now().date()  # Defina a data de fim do primeiro intervalo
         ),
 
         # Campos de seleção para o segundo intervalo de data
         dcc.DatePickerSingle(
             id='start-date-selector-2-page2',
-            placeholder='Select a start date for the second interval',
+            placeholder='Selecione uma data de início para o segundo intervalo',
             date=datetime.now().date() - timedelta(days=14)  # Defina a data de início do segundo intervalo
         ),
 
         dcc.DatePickerSingle(
             id='end-date-selector-2-page2',
-            placeholder='Select an end date for the second interval',
+            placeholder='Selecione uma data de fim para o segundo intervalo',
             date=datetime.now().date() - timedelta(days=7)  # Defina a data de fim do segundo intervalo
         ),
 
@@ -294,7 +293,7 @@ page2_layout = html.Div(
 
 @app.callback(
     dash.dependencies.Output('scatter-plot-page2', 'figure'),
-    [dash.dependencies.Input('feature', 'value'),
+    [dash.dependencies.Input('feature-selector-page2', 'value'),
      dash.dependencies.Input('start-date-selector-page2', 'date'),
      dash.dependencies.Input('end-date-selector-page2', 'date'),
      dash.dependencies.Input('start-date-selector-2-page2', 'date'),
@@ -311,11 +310,11 @@ def update_scatter_plot_page2(selected_features, start_date, end_date, start_dat
             end_date_2 = pd.to_datetime(end_date_2).date()
 
             # Filter the data based on the selected intervals
-            filtered_data_1 = base[
+            filtered_data_1 = base3[
                 (base3['Datetime'].dt.date >= start_date) & (base3['Datetime'].dt.date <= end_date)
             ]
-            filtered_data_2 = base[
-                (base3['Datetime'].dt.date3 >= start_date_2) & (base3['Datetime'].dt.date <= end_date_2)
+            filtered_data_2 = base3[
+                (base3['Datetime'].dt.date >= start_date_2) & (base3['Datetime'].dt.date <= end_date_2)
             ]
 
             # Create scatter plot traces for each selected feature and interval
@@ -333,9 +332,9 @@ def update_scatter_plot_page2(selected_features, start_date, end_date, start_dat
 
     fig_scatter = go.Figure(data=traces)
     fig_scatter.update_layout(
-        title='Distribution of Selected Features (Scatter)',
-        xaxis_title='Date',
-        yaxis_title='Value'
+        title='Distribuição das Features Selecionadas (Dispersão)',
+        xaxis_title='Data',
+        yaxis_title='Valor'
     )
 
     return fig_scatter
@@ -353,7 +352,6 @@ def update_line_plot(selected_features, start_date, end_date, start_date_2, end_
     traces = []
 
     if start_date and end_date and start_date_2 and end_date_2:
-
         try:
             start_date = pd.to_datetime(start_date).date()
             end_date = pd.to_datetime(end_date).date()
@@ -361,10 +359,10 @@ def update_line_plot(selected_features, start_date, end_date, start_date_2, end_
             end_date_2 = pd.to_datetime(end_date_2).date()
 
             # Filter the data based on the selected intervals
-            filtered_data_1 = base[
+            filtered_data_1 = base3[
                 (base3['Datetime'].dt.date >= start_date) & (base3['Datetime'].dt.date <= end_date)
             ]
-            filtered_data_2 = base[
+            filtered_data_2 = base3[
                 (base3['Datetime'].dt.date >= start_date_2) & (base3['Datetime'].dt.date <= end_date_2)
             ]
 
@@ -383,16 +381,16 @@ def update_line_plot(selected_features, start_date, end_date, start_date_2, end_
 
     fig_line = go.Figure(data=traces)
     fig_line.update_layout(
-        title='Distribution of Selected Features (Line)',
-        xaxis_title='Date',
-        yaxis_title='Value'
+        title='Distribuição das Features Selecionadas (Linha)',
+        xaxis_title='Data',
+        yaxis_title='Valor'
     )
 
     return fig_line
 
 
 @app.callback(
-     dash.dependencies.Output('box-plot-page2', 'figure'),
+    dash.dependencies.Output('box-plot-page2', 'figure'),
     [dash.dependencies.Input('feature-selector-page2', 'value'),
      dash.dependencies.Input('start-date-selector-page2', 'date'),
      dash.dependencies.Input('end-date-selector-page2', 'date'),
@@ -410,10 +408,10 @@ def update_box_plot(selected_features, start_date, end_date, start_date_2, end_d
             end_date_2 = pd.to_datetime(end_date_2).date()
 
             # Filter the data based on the selected intervals
-            filtered_data_1 = base[
+            filtered_data_1 = base3[
                 (base3['Datetime'].dt.date >= start_date) & (base3['Datetime'].dt.date <= end_date)
             ]
-            filtered_data_2 = base[
+            filtered_data_2 = base3[
                 (base3['Datetime'].dt.date >= start_date_2) & (base3['Datetime'].dt.date <= end_date_2)
             ]
 
@@ -430,11 +428,12 @@ def update_box_plot(selected_features, start_date, end_date, start_date_2, end_d
 
     fig_box = go.Figure(data=traces)
     fig_box.update_layout(
-        title='Distribution of Selected Features (Boxplot)',
-        yaxis_title='Value'
+        title='Distribuição das Features Selecionadas (Boxplot)',
+        yaxis_title='Valor'
     )
 
     return fig_box
+
 # Ajustes pagina 3
 
 url2 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/resultados_reais2.csv'
