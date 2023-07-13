@@ -475,18 +475,46 @@ def update_boxplot(parametro, nome_values):
 
     return fig
 
+# Ajustes pagina 4
 
+url4 = 'https://raw.githubusercontent.com/GUIPETAV/Base/main/resultados_sim.csv'
+base4 = pd.read_csv(url4)
 
+# Lista de parâmetros disponíveis
 
-
-
-
-
+parametros = ['Acurácia', 'Precisão', 'F1-score', 'Recall']
 
 page4_layout = html.Div([
     html.H1("Classificadores simulado/simulado", id="h1", style={'text-align': 'center'}),
-    # Conteúdo da página 4...
+   html.Div([
+        dcc.Dropdown(
+            id='parametro-dropdown',
+            options=[{'label': parametro, 'value': parametro} for parametro in parametros],
+            value=parametros[0]  # Seleciona o primeiro parâmetro por padrão
+        ),
+        dcc.Dropdown(
+            id='nome-dropdown',
+            options=[{'label': nome, 'value': nome} for nome in base4['Nome'].unique()],
+            multi=True,
+            value=[base4['Nome'].unique()[0]]  # Seleciona o primeiro nome por padrão
+        ),
+        dcc.Graph(id='boxplot-graph')
+    ])
 ])
+
+# Callback para atualizar o gráfico de boxplot com base nos parâmetros selecionados
+@app.callback(
+    Output('boxplot-graph-page4', 'figure'),
+    [Input('parametro-dropdown-page4', 'value'),
+     Input('nome-dropdown-page4', 'value')]
+)
+def update_boxplot(parametro, nome_values):
+    fig2 = go.Figure()
+    for nome in nome_values:
+        filtered_df = base4[base4['Nome'] == nome]
+        fig2.add_trace(go.Box(y=filtered_df[parametro], name=nome))
+
+    return fig2
 
 page5_layout = html.Div([
     html.H1("Classificadores simulado/reais", id="h1", style={'text-align': 'center'}),
